@@ -56,8 +56,6 @@ var cssClassName = tabOverride.style.className();
 tabOverride.style.className('tabOverride');
 ```
 
-This function will not add multiple classes to an element.
-
 ```javascript
 var textarea = document.getElementById('txt');
 
@@ -67,3 +65,5 @@ tabOverride.style.toggleClass(textarea, true);
 // remove class
 tabOverride.style.toggleClass(textarea, false);
 ```
+
+This function will not add multiple classes to an element.
