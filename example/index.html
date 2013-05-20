@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Style Extension Example</title>
+        <!--[if lt IE 8]>
+            <style>
+                /* IE 6,7 don't support :focus */
+                textarea.tabOverride,
+                .tabOverride textarea {
+                    background-color: #eee;
+                }
+            </style>
+        <![endif]-->
+        <style>
+            textarea.tabOverride:focus,
+            .tabOverride textarea:focus {
+                background-color: #eee;
+            }
+        </style>
+    </head>
+    <body>
+        <textarea id="txt" cols="50" rows="10" autofocus></textarea>
+        <script src="lib/jquery-1.9.1.min.js"></script>
+        <script src="lib/taboverride-4.0.0-dev.2013.05.15.min.js"></script>
+        <script src="lib/jquery.taboverride-4.0.0-dev.2013.05.15.min.js"></script>
+        <script src="../src/taboverride.style.js"></script>
+        <script src="../src/jquery.taboverride.style.js"></script>
+        <script>
+            /*global tabOverride, jQuery, $ */
+
+            // style extension is enabled by default
+            $('#txt').tabOverride();
+
+            // disable the style extension
+            //$.fn.tabOverride.style(false);
+        </script>
+    </body>
+</html>
