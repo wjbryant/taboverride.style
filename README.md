@@ -66,4 +66,14 @@ tabOverride.style.toggleClass(textarea, true);
 tabOverride.style.toggleClass(textarea, false);
 ```
 
-This function will not add multiple classes to an element.
+```javascript
+var textarea = document.getElementById('txt');
+
+// add class if style extension is enabled
+tabOverride.style.toggleClassIfEnabled(textarea, true);
+
+// remove class if style extension is enabled
+tabOverride.style.toggleClassIfEnabled(textarea, false);
+```
+
+These functions will not add multiple classes to an element.
