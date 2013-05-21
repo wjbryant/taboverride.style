@@ -32,17 +32,21 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
             hasClassRegExp = new RegExp('(?:^|\\s)' + className + '(?:\\s|$)'),
             removeClassRegExp = new RegExp('(?:^|\\s)' + className + '(?!\\S)', 'g');
 
-        if (style) {
-            // check for class
-            if (hasClassRegExp.test(currClass)) {
-                if (!addClass) {
-                    // remove class
-                    elem.className = currClass.replace(removeClassRegExp, '');
-                }
-            } else if (addClass) {
-                // add class
-                elem.className += className;
+        // check for class
+        if (hasClassRegExp.test(currClass)) {
+            if (!addClass) {
+                // remove class
+                elem.className = currClass.replace(removeClassRegExp, '');
             }
+        } else if (addClass) {
+            // add class
+            elem.className += className;
+        }
+    }
+
+    function toggleClassIfEnabled(elem, addClass) {
+        if (style) {
+            toggleClass(elem, addClass);
         }
     }
 
@@ -67,20 +71,21 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
     };
 
     tabOverride.style.toggleClass = toggleClass;
+    tabOverride.style.toggleClassIfEnabled = toggleClassIfEnabled;
 
     // add the extension to Tab Override (hook into the set method)
-    tabOverride.addExtension(toggleClass);
+    tabOverride.addExtension(toggleClassIfEnabled);
 
     // wrap the addListeners and removeListeners utility methods
     // This will only affect extensions, since Tab Override only adds and
     // removes listeners from inside the set method and doesn't use these
     // utility methods directly.
     tabOverride.utils.addListeners = function (elem) {
-        toggleClass(elem, true);
+        toggleClassIfEnabled(elem, true);
         addListeners(elem);
     };
     tabOverride.utils.removeListeners = function (elem) {
-        toggleClass(elem, false);
+        toggleClassIfEnabled(elem, false);
         removeListeners(elem);
     };
 }));

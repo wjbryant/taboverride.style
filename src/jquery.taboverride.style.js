@@ -44,16 +44,16 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 	$fnTabOverride.style = tabOverride.style;
 
 	$fnTabOverride.addDelegatedExtension(function ( $container, selector, enable ) {
-		$fnTabOverride.style.toggleClass( $container, enable );
+		$fnTabOverride.style.toggleClassIfEnabled( $container, enable );
 	});
 
 	// compatibility with other extensions that add and remove the listeners directly
 	$fnTabOverride.utils.addDelegatedListeners = function ( $container, selector ) {
-		$fnTabOverride.style.toggleClass( $container, true );
+		$fnTabOverride.style.toggleClassIfEnabled( $container, true );
 		addDelegatedListeners( $container, selector );
 	};
 	$fnTabOverride.utils.removeDelegatedListeners = function ( $container, selector ) {
-		$fnTabOverride.style.toggleClass( $container, false );
+		$fnTabOverride.style.toggleClassIfEnabled( $container, false );
 		removeDelegatedListeners( $container, selector );
 	};
 }));
