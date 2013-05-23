@@ -1,7 +1,7 @@
 /*! taboverride.style v0.1.0-dev | https://github.com/wjbryant/taboverride.style
 Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 
-/*global tabOverride */
+/*global exports, require, define, tabOverride */
 
 // use CommonJS or AMD if available
 (function (factory) {
@@ -20,33 +20,71 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
     }
 }(function (tabOverride) {
     'use strict';
-    
+
     var style = true,
         className = 'tabOverride',
         addListeners = tabOverride.utils.addListeners,
         removeListeners = tabOverride.utils.removeListeners;
 
-    // add or remove the tabOverride class if the extension is enabled
-    function toggleClass(elem, addClass) {
-        var currClass = elem.className,
-            hasClassRegExp = new RegExp('(?:^|\\s)' + className + '(?:\\s|$)'),
-            removeClassRegExp = new RegExp('(?:^|\\s)' + className + '(?!\\S)', 'g');
+    // checks if an element has the specified CSS class
+    function hasClass(elem, cssClass) {
+        return (new RegExp('(?:^|\\s)' + cssClass + '(?:\\s|$)')).test(elem.className);
+    }
 
-        // check for class
-        if (hasClassRegExp.test(currClass)) {
-            if (!addClass) {
-                // remove class
-                elem.className = currClass.replace(removeClassRegExp, '');
-            }
-        } else if (addClass) {
-            // add class
-            elem.className += className;
+    // add a class to an element
+    function addClass(elem, cssClass) {
+        if (!hasClass(elem, cssClass)) {
+            elem.className += (elem.className ? ' ' : '') + cssClass;
         }
     }
 
-    function toggleClassIfEnabled(elem, addClass) {
+    // remove a class from an element
+    function removeClass(elem, cssClass) {
+        elem.className = elem.className.replace(
+            new RegExp('(?:^|\\s)' + cssClass + '(?=\\s|$)', 'g'),
+            ''
+        );
+    }
+
+    // replace the tabOverride class on an element with a new one
+    function replaceClass(elem, newClassName) {
+        elem.className = elem.className.replace(
+            new RegExp('(?=^|\\s)' + className + '(?=\\s|$)', 'g'),
+            newClassName
+        );
+    }
+
+    // loop through all textareas and update them to the new class
+    // if no new class name is specified, remove the class
+    function updateClasses(newClassName) {
+        var textareas = document.getElementsByTagName('textarea'),
+            i,
+            len = textareas.length,
+            editClass,
+            cssClass;
+
+        if (newClassName) {
+            editClass = replaceClass;
+            cssClass = newClassName;
+        } else {
+            editClass = removeClass;
+            cssClass = className;
+        }
+
+        for (i = 0; i < len; i += 1) {
+            editClass(textareas[i], cssClass);
+        }
+    }
+
+    // add or remove the class
+    function toggleClass(elem, add) {
+        (add ? addClass : removeClass)(elem, className);
+    }
+
+    // add or remove the class if the extension is enabled
+    function toggleClassIfEnabled(elem, add) {
         if (style) {
-            toggleClass(elem, addClass);
+            toggleClass(elem, add);
         }
     }
 
@@ -62,7 +100,8 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
     // get/set the className (default = tabOverride)
     tabOverride.style.className = function (newClassName) {
         if (arguments.length) {
-            if (typeof newClassName === 'string') {
+            if (newClassName && typeof newClassName === 'string') {
+                updateClasses(newClassName);
                 className = newClassName;
             }
         } else {
@@ -72,6 +111,7 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 
     tabOverride.style.toggleClass = toggleClass;
     tabOverride.style.toggleClassIfEnabled = toggleClassIfEnabled;
+    tabOverride.style.updateClasses = updateClasses;
 
     // add the extension to Tab Override (hook into the set method)
     tabOverride.addExtension(toggleClassIfEnabled);

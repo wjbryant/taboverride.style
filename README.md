@@ -10,7 +10,7 @@ When using delegated events with the jQuery plugin, the class is applied to the
 container element. Therefore, to account for both behaviors, CSS selectors
 should be written similar to the following:
 
-```
+```css
 textarea.tabOverride,
 .tabOverride textarea {
     /* rules */
@@ -19,7 +19,7 @@ textarea.tabOverride,
 
 The `focus` psuedo class is used in the example, but is not supported by IE 6 or 7.
 
-```
+```css
 .tabOverride:focus {
     /* rules */
 }
@@ -77,3 +77,11 @@ tabOverride.style.toggleClassIfEnabled(textarea, false);
 ```
 
 These functions will not add multiple classes to an element.
+
+```javascript
+// update the CSS class for all textareas with a new one
+tabOverride.style.updateClasses('customClassName');
+
+// remove the CSS class from all textareas
+tabOverride.style.updateClasses();
+```
