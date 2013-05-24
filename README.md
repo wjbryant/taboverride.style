@@ -2,7 +2,8 @@
 
 Style extension for [Tab Override](https://github.com/wjbryant/taboverride) 4.0+
 
-This extension adds a `tabOverride` CSS class to textarea elements when Tab Override is enabled.
+This extension adds `tabOverrideEnabled` and `tabOverrideActive` CSS classes to
+textarea elements when Tab Override is enabled and active.
 
 ## Usage
 
@@ -11,8 +12,8 @@ container element. Therefore, to account for both behaviors, CSS selectors
 should be written similar to the following:
 
 ```css
-textarea.tabOverride,
-.tabOverride textarea {
+textarea.tabOverrideActive,
+.tabOverrideActive textarea {
     /* rules */
 }
 ```
@@ -20,7 +21,7 @@ textarea.tabOverride,
 The `focus` psuedo class is used in the example, but is not supported by IE 6 or 7.
 
 ```css
-.tabOverride:focus {
+.tabOverrideActive:focus {
     /* rules */
 }
 ```
@@ -36,7 +37,7 @@ var styleEnabled = tabOverride.style();
 
 ```javascript
 // enable the extension
-tabOverride.style(true);
+tabOverride.style(true); // default
 ```
 
 ```javascript
@@ -44,44 +45,45 @@ tabOverride.style(true);
 tabOverride.style(false);
 ```
 
-Disabling the style extension will stop classes from being added and
-removed, but won't remove any classes that were previously added.
+### Get/Set Enabled Class
+
+```javascript
+var enabledClass = tabOverride.style.enabledClass();
+tabOverride.style.enabledClass('tabOverrideEnabled'); // default
+```
+
+### Get/Set Active Class
+
+```javascript
+var activeClass = tabOverride.style.activeClass();
+tabOverride.style.activeClass('tabOverrideActive'); // default
+```
+
+### Get/Set Hard Tab Size
+
+```javascript
+var hardTabSize = tabOverride.style.hardTabSize();
+tabOverride.style.hardTabSize(4); // default
+```
 
 ### Utility Functions
 
 ```javascript
-var cssClassName = tabOverride.style.className();
-
-// tabOverride is the default class name
-tabOverride.style.className('tabOverride');
-```
-
-```javascript
 var textarea = document.getElementById('txt');
 
-// add class
-tabOverride.style.toggleClass(textarea, true);
+tabOverride.style.utils.addEnabledClass(textarea);
+tabOverride.style.utils.addActiveClass(textarea);
 
-// remove class
-tabOverride.style.toggleClass(textarea, false);
+tabOverride.style.utils.removeEnabledClass(textarea);
+tabOverride.style.utils.removeActiveClass(textarea);
+
+// update/replace the class for all textareas
+tabOverride.style.utils.updateEnabledClass('newEnabledClass');
+tabOverride.style.utils.updateActiveClass('newActiveClass');
+
+// remove the class for all textareas
+tabOverride.style.utils.updateEnabledClass();
+tabOverride.style.utils.updateActiveClass();
 ```
 
-```javascript
-var textarea = document.getElementById('txt');
-
-// add class if style extension is enabled
-tabOverride.style.toggleClassIfEnabled(textarea, true);
-
-// remove class if style extension is enabled
-tabOverride.style.toggleClassIfEnabled(textarea, false);
-```
-
-These functions will not add multiple classes to an element.
-
-```javascript
-// update the CSS class for all textareas with a new one
-tabOverride.style.updateClasses('customClassName');
-
-// remove the CSS class from all textareas
-tabOverride.style.updateClasses();
-```
+*Note: These functions will not add multiple classes to an element.*

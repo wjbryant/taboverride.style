@@ -22,18 +22,26 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
     'use strict';
 
     var style = true,
-        className = 'tabOverride',
+        enabledClass = 'tabOverrideEnabled',
+        activeClass = 'tabOverrideActive',
         addListeners = tabOverride.utils.addListeners,
-        removeListeners = tabOverride.utils.removeListeners;
-
-    // checks if an element has the specified CSS class
-    function hasClass(elem, cssClass) {
-        return (new RegExp('(?:^|\\s)' + cssClass + '(?:\\s|$)')).test(elem.className);
-    }
+        removeListeners = tabOverride.utils.removeListeners,
+        hardTabSize = 4,
+        styleElem = document.createElement('style'),
+        styleRules = 'textarea.' + enabledClass + ' { ' +
+            '-moz-tab-size: ' + hardTabSize + '; ' +
+            '-o-tab-size: ' + hardTabSize + '; ' +
+            'tab-size: ' + hardTabSize + '; ' +
+            '}',
+        styleSheet,
+        tabSizeRule,
+        // this is a live collection
+        textareas = document.getElementsByTagName('textarea');
 
     // add a class to an element
     function addClass(elem, cssClass) {
-        if (!hasClass(elem, cssClass)) {
+        // check if the element has the specified CSS class before adding it
+        if (!(new RegExp('(?:^|\\s)' + cssClass + '(?:\\s|$)')).test(elem.className)) {
             elem.className += (elem.className ? ' ' : '') + cssClass;
         }
     }
@@ -46,86 +54,194 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         );
     }
 
-    // replace the tabOverride class on an element with a new one
-    function replaceClass(elem, newClassName) {
+    // replace a class with a new one for the specified element
+    function replaceClass(elem, oldClass, newClass) {
         elem.className = elem.className.replace(
-            new RegExp('(?=^|\\s)' + className + '(?=\\s|$)', 'g'),
-            newClassName
+            new RegExp('(?=^|\\s)' + oldClass + '(?=\\s|$)', 'g'),
+            newClass
         );
     }
 
-    // loop through all textareas and update them to the new class
-    // if no new class name is specified, remove the class
-    function updateClasses(newClassName) {
-        var textareas = document.getElementsByTagName('textarea'),
-            i,
-            len = textareas.length,
-            editClass,
-            cssClass;
+    // add the enabled class
+    function addEnabledClass(elem) {
+        addClass(elem, enabledClass);
+    }
 
-        if (newClassName) {
-            editClass = replaceClass;
-            cssClass = newClassName;
-        } else {
-            editClass = removeClass;
-            cssClass = className;
-        }
+    // add the active class
+    function addActiveClass(elem) {
+        addClass(elem, activeClass);
+    }
+
+    // remove the enabled class
+    function removeEnabledClass(elem) {
+        removeClass(elem, enabledClass);
+    }
+
+    // remove the active class
+    function removeActiveClass(elem) {
+        removeClass(elem, activeClass);
+    }
+
+    // loop through all textareas and update them to the new class
+    // if no new class is specified, remove the old class
+    function updateClassOnTextareas(oldClass, newClass) {
+        var editClass = newClass ? replaceClass : removeClass,
+            len = textareas.length,
+            i;
 
         for (i = 0; i < len; i += 1) {
-            editClass(textareas[i], cssClass);
+            editClass(textareas[i], oldClass, newClass);
         }
     }
 
-    // add or remove the class
-    function toggleClass(elem, add) {
-        (add ? addClass : removeClass)(elem, className);
+    function updateEnabledClass(newClass) {
+        updateClassOnTextareas(enabledClass, newClass);
     }
 
-    // add or remove the class if the extension is enabled
-    function toggleClassIfEnabled(elem, add) {
-        if (style) {
-            toggleClass(elem, add);
-        }
+    function updateActiveClass(newClass) {
+        updateClassOnTextareas(activeClass, newClass);
+    }
+
+    // change the class selector for the hard tab size CSS rule
+    function updateTabSizeCSSSelector(newClassName) {
+        tabSizeRule.selectorText = 'textarea.' + newClassName;
+    }
+
+    // change the tab-size CSS property value
+    function updateTabSizeCSSValues(newTabSize) {
+        tabSizeRule.style.MozTabSize = newTabSize;
+        tabSizeRule.style.OTabSize = newTabSize;
+        tabSizeRule.style.tabSize = newTabSize;
     }
 
     // provide a method to enable/disable the extension
     tabOverride.style = function (enable) {
+        var len,
+            i,
+            editEnabledClass,
+            editActiveClass,
+            currTextarea;
+
         if (arguments.length) {
-            style = enable ? true : false;
+            len = textareas.length;
+
+            if (enable) {
+                editEnabledClass = addEnabledClass;
+                editActiveClass = addActiveClass;
+                style = true;
+            } else {
+                editEnabledClass = removeEnabledClass;
+                editActiveClass = removeActiveClass;
+                style = false;
+            }
+
+            for (i = 0; i < len; i += 1) {
+                currTextarea = textareas[i];
+                if (currTextarea.getAttribute('data-taboverride-enabled')) {
+                    editEnabledClass(currTextarea);
+                    editActiveClass(currTextarea);
+                }
+            }
+
             return this;
         }
+
         return style;
     };
 
-    // get/set the className (default = tabOverride)
-    tabOverride.style.className = function (newClassName) {
+    // get/set the "enabled" class name (default = tabOverrideEnabled)
+    tabOverride.style.enabledClass = function (newClass) {
         if (arguments.length) {
-            if (newClassName && typeof newClassName === 'string') {
-                updateClasses(newClassName);
-                className = newClassName;
+            if (newClass && typeof newClass === 'string') {
+                updateClassOnTextareas(enabledClass, newClass);
+                updateTabSizeCSSSelector(newClass);
+                enabledClass = newClass;
             }
-        } else {
-            return className;
+            return this;
         }
+        return enabledClass;
     };
 
-    tabOverride.style.toggleClass = toggleClass;
-    tabOverride.style.toggleClassIfEnabled = toggleClassIfEnabled;
-    tabOverride.style.updateClasses = updateClasses;
+    // get/set the "active" class name (default = tabOverrideActive)
+    tabOverride.style.activeClass = function (newClass) {
+        if (arguments.length) {
+            if (newClass && typeof newClass === 'string') {
+                updateClassOnTextareas(activeClass, newClass);
+                activeClass = newClass;
+            }
+            return this;
+        }
+        return activeClass;
+    };
+
+    // get/set the hard tab size (default = 4)
+    tabOverride.style.hardTabSize = function (size) {
+        if (arguments.length) {
+            if (typeof size === 'number' && size > 0) {
+                updateTabSizeCSSValues(size);
+                hardTabSize = size;
+            }
+            return this;
+        }
+        return hardTabSize;
+    };
+
+    // public util methods
+    tabOverride.style.utils = {
+        addEnabledClass: addEnabledClass,
+        addActiveClass: addActiveClass,
+        removeEnabledClass: removeEnabledClass,
+        removeActiveClass: removeActiveClass,
+        updateEnabledClass: updateEnabledClass,
+        updateActiveClass: updateActiveClass
+    };
+
+
+    // add the style element to the page
+    document.getElementsByTagName('head')[0].appendChild(styleElem);
+
+    // insert the new rule
+    if (styleElem.styleSheet) { // IE
+        styleElem.styleSheet.cssText = styleRules;
+    } else {
+        styleElem.appendChild(document.createTextNode(styleRules));
+    }
+
+    // get a reference to the styleSheet object
+    styleSheet = styleElem.sheet || styleElem.styleSheet ||
+            document.styleSheets[document.styleSheets - 1];
+
+    // get a reference to the hard tab size rule in the style sheet
+    tabSizeRule = (styleSheet.cssRules || styleSheet.rules)[0];
+
 
     // add the extension to Tab Override (hook into the set method)
-    tabOverride.addExtension(toggleClassIfEnabled);
+    tabOverride.addExtension(function (elem, enable) {
+        if (style) {
+            if (enable) {
+                addEnabledClass(elem);
+                addActiveClass(elem);
+            } else {
+                removeEnabledClass(elem);
+                removeActiveClass(elem);
+            }
+        }
+    });
 
     // wrap the addListeners and removeListeners utility methods
     // This will only affect extensions, since Tab Override only adds and
     // removes listeners from inside the set method and doesn't use these
-    // utility methods directly.
+    // utility methods directly. Only modify the active class here.
     tabOverride.utils.addListeners = function (elem) {
-        toggleClassIfEnabled(elem, true);
+        if (style) {
+            addActiveClass(elem);
+        }
         addListeners(elem);
     };
     tabOverride.utils.removeListeners = function (elem) {
-        toggleClassIfEnabled(elem, false);
+        if (style) {
+            removeActiveClass(elem);
+        }
         removeListeners(elem);
     };
 }));
