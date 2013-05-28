@@ -48,8 +48,8 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 			editEnabledClass,
 			editActiveClass;
 
-		if ($fnTabOverride.style()) {
-			if (enable) {
+		if ( $fnTabOverride.style() ) {
+			if ( enable ) {
 				editEnabledClass = utils.addEnabledClass;
 				editActiveClass = utils.addActiveClass;
 			} else {
@@ -57,18 +57,22 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 				editActiveClass = utils.removeActiveClass;
 			}
 
-			editEnabledClass( $container );
-			editActiveClass( $container );
+			editEnabledClass( $container[0] );
+			editActiveClass( $container[0] );
 		}
 	});
 
 	// compatibility with other extensions that add and remove the listeners directly
 	$fnTabOverride.utils.addDelegatedListeners = function ( $container, selector ) {
-		$fnTabOverride.style.utils.addActiveClass( $container );
+		if ( $fnTabOverride.style() ) {
+			$fnTabOverride.style.utils.addActiveClass( $container[0] );
+		}
 		addDelegatedListeners( $container, selector );
 	};
 	$fnTabOverride.utils.removeDelegatedListeners = function ( $container, selector ) {
-		$fnTabOverride.style.utils.removeActiveClass( $container );
+		if ( $fnTabOverride.style() ) {
+			$fnTabOverride.style.utils.removeActiveClass( $container[0] );
+		}
 		removeDelegatedListeners( $container, selector );
 	};
 }));
