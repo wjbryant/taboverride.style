@@ -14,7 +14,7 @@ should be written similar to the following:
 ```css
 textarea.tabOverrideActive,
 .tabOverrideActive textarea {
-    /* rules */
+    /* declarations */
 }
 ```
 
@@ -22,7 +22,7 @@ The `focus` psuedo class is used in the example, but is not supported by IE 6 or
 
 ```css
 .tabOverrideActive:focus {
-    /* rules */
+    /* declarations */
 }
 ```
 
@@ -49,6 +49,9 @@ tabOverride.style(false);
 
 ```javascript
 var enabledClass = tabOverride.style.enabledClass();
+```
+
+```javascript
 tabOverride.style.enabledClass('tabOverrideEnabled'); // default
 ```
 
@@ -56,6 +59,9 @@ tabOverride.style.enabledClass('tabOverrideEnabled'); // default
 
 ```javascript
 var activeClass = tabOverride.style.activeClass();
+```
+
+```javascript
 tabOverride.style.activeClass('tabOverrideActive'); // default
 ```
 
@@ -63,6 +69,9 @@ tabOverride.style.activeClass('tabOverrideActive'); // default
 
 ```javascript
 var hardTabSize = tabOverride.style.hardTabSize();
+```
+
+```javascript
 tabOverride.style.hardTabSize(4); // default
 ```
 
