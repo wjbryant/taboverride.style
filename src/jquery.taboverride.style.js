@@ -43,22 +43,20 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 
 	$fnTabOverride.style = tabOverride.style;
 
+	// for delegated events, add and remove the classes on the container element
 	$fnTabOverride.addDelegatedExtension(function ( $container, selector, enable ) {
-		var utils = $fnTabOverride.style.utils,
-			editEnabledClass,
-			editActiveClass;
+		var utils = $fnTabOverride.style.utils;
 
 		if ( $fnTabOverride.style() ) {
 			if ( enable ) {
-				editEnabledClass = utils.addEnabledClass;
-				editActiveClass = utils.addActiveClass;
+				utils.addEnabledClass( $container[0] );
+				utils.addActiveClass( $container[0] );
+				utils.tabSizeCSSSelector( 'enabledClass() ' + selector );
 			} else {
-				editEnabledClass = utils.removeEnabledClass;
-				editActiveClass = utils.removeActiveClass;
+				utils.removeEnabledClass( $container[0] );
+				utils.removeActiveClass( $container[0] );
+				utils.tabSizeCSSSelector( '' );
 			}
-
-			editEnabledClass( $container[0] );
-			editActiveClass( $container[0] );
 		}
 	});
 

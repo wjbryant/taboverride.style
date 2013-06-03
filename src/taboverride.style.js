@@ -27,14 +27,10 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         addListeners = tabOverride.utils.addListeners,
         removeListeners = tabOverride.utils.removeListeners,
         hardTabSize = 4,
-        styleElem = document.createElement('style'),
-        styleRules = 'textarea.' + enabledClass + ' { ' +
-            '-moz-tab-size: ' + hardTabSize + '; ' +
-            '-o-tab-size: ' + hardTabSize + '; ' +
-            'tab-size: ' + hardTabSize + '; ' +
-            '}',
+        styleElem,
         styleSheet,
         tabSizeRule,
+        extraSelectorText,
         // this is a live collection
         textareas = document.getElementsByTagName('textarea');
 
@@ -102,16 +98,45 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         updateClassOnTextareas(activeClass, newClass);
     }
 
-    // change the class selector for the hard tab size CSS rule
-    function updateTabSizeCSSSelector(newClassName) {
-        tabSizeRule.selectorText = 'textarea.' + newClassName;
+    // change the tab-size CSS property value
+    function updateTabSizeCSSValue(tabSize) {
+        tabSizeRule.style.MozTabSize = tabSize;
+        tabSizeRule.style.OTabSize = tabSize;
+        tabSizeRule.style.tabSize = tabSize;
     }
 
-    // change the tab-size CSS property value
-    function updateTabSizeCSSValues(newTabSize) {
-        tabSizeRule.style.MozTabSize = newTabSize;
-        tabSizeRule.style.OTabSize = newTabSize;
-        tabSizeRule.style.tabSize = newTabSize;
+    function updateTabSizeCSSRule(className, tabSize) {
+        var selector = 'textarea.' + (className || enabledClass);
+
+        if (extraSelectorText) {
+            selector += ',' + extraSelectorText
+                .replace('enabledClass()', '.' + enabledClass)
+                .replace('activeClass()', '.' + activeClass);
+        }
+
+        if (styleSheet.deleteRule) {
+            if (styleSheet.cssRules.length) {
+                styleSheet.deleteRule(0);
+            }
+            styleSheet.insertRule(selector + '{}', 0);
+        } else if (styleSheet.removeRule) {
+            // IE
+            if (styleSheet.rules.length) {
+                styleSheet.removeRule(0);
+            }
+            styleSheet.addRule(selector, '', 0);
+        }
+
+        tabSizeRule = (styleSheet.cssRules || styleSheet.rules)[0];
+        updateTabSizeCSSValue(arguments.length > 1 ? tabSize : hardTabSize);
+    }
+
+    function tabSizeCSSSelector(newText) {
+        if (!arguments.length) {
+            return extraSelectorText;
+        }
+        extraSelectorText = newText;
+        updateTabSizeCSSRule();
     }
 
     // provide a method to enable/disable the extension
@@ -154,7 +179,7 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         if (arguments.length) {
             if (newClass && typeof newClass === 'string') {
                 updateClassOnTextareas(enabledClass, newClass);
-                updateTabSizeCSSSelector(newClass);
+                updateTabSizeCSSRule(newClass);
                 enabledClass = newClass;
             }
             return this;
@@ -178,7 +203,7 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
     tabOverride.style.hardTabSize = function (size) {
         if (arguments.length) {
             if (typeof size === 'number' && size > 0) {
-                updateTabSizeCSSValues(size);
+                updateTabSizeCSSValue(size);
                 hardTabSize = size;
             }
             return this;
@@ -193,26 +218,24 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         removeEnabledClass: removeEnabledClass,
         removeActiveClass: removeActiveClass,
         updateEnabledClass: updateEnabledClass,
-        updateActiveClass: updateActiveClass
+        updateActiveClass: updateActiveClass,
+        tabSizeCSSSelector: tabSizeCSSSelector
     };
 
 
-    // add the style element to the page
-    document.getElementsByTagName('head')[0].appendChild(styleElem);
-
-    // insert the new rule
-    if (styleElem.styleSheet) { // IE
-        styleElem.styleSheet.cssText = styleRules;
+    // create a new style sheet element
+    if (document.createStyleSheet) {
+        // IE
+        styleSheet = document.createStyleSheet();
     } else {
-        styleElem.appendChild(document.createTextNode(styleRules));
+        // add a new style element to the page
+        styleElem = document.createElement('style');
+        document.getElementsByTagName('head')[0].appendChild(styleElem);
+        styleSheet = styleElem.sheet || document.styleSheets[document.styleSheets - 1];
     }
 
-    // get a reference to the styleSheet object
-    styleSheet = styleElem.sheet || styleElem.styleSheet ||
-            document.styleSheets[document.styleSheets - 1];
-
-    // get a reference to the hard tab size rule in the style sheet
-    tabSizeRule = (styleSheet.cssRules || styleSheet.rules)[0];
+    // create the CSS rule
+    updateTabSizeCSSRule(enabledClass);
 
 
     // add the extension to Tab Override (hook into the set method)

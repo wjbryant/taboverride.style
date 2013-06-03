@@ -93,6 +93,14 @@ tabOverride.style.utils.updateActiveClass('newActiveClass');
 // remove the class for all textareas
 tabOverride.style.utils.updateEnabledClass();
 tabOverride.style.utils.updateActiveClass();
+
+// get the current extra CSS selector for the hard tab size rule
+tabOverride.style.utils.tabSizeCSSSelector();
+
+// add an extra CSS selector for the hard tab size rule
+// enabledClass() and activeClass() will be replaced with the current enabled or
+// active class
+tabOverride.style.utils.tabSizeCSSSelector('enabledClass() textarea');
 ```
 
-*Note: These functions will not add multiple classes to an element.*
+*Note: These functions will not add a class to an element more than once.*
