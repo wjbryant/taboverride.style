@@ -110,8 +110,8 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 
         if (extraSelectorText) {
             selector += ',' + extraSelectorText
-                .replace('enabledClass()', '.' + enabledClass)
-                .replace('activeClass()', '.' + activeClass);
+                .replace('.(enabledClass)', '.' +  enabledClass)
+                .replace('.(activeClass)', '.' + activeClass);
         }
 
         if (styleSheet.deleteRule) {

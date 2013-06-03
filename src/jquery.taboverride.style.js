@@ -51,7 +51,7 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 			if ( enable ) {
 				utils.addEnabledClass( $container[0] );
 				utils.addActiveClass( $container[0] );
-				utils.tabSizeCSSSelector( 'enabledClass() ' + selector );
+				utils.tabSizeCSSSelector( '.(enabledClass) ' + selector );
 			} else {
 				utils.removeEnabledClass( $container[0] );
 				utils.removeActiveClass( $container[0] );
