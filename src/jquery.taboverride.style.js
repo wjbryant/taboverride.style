@@ -39,24 +39,48 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 
 	var $fnTabOverride = $.fn.tabOverride,
 		addDelegatedListeners = $fnTabOverride.utils.addDelegatedListeners,
-		removeDelegatedListeners = $fnTabOverride.utils.removeDelegatedListeners;
+		removeDelegatedListeners = $fnTabOverride.utils.removeDelegatedListeners,
+		cache = [];
+
+	// for delegated events, add and remove the classes on the container element
+	function addStyles( $container, selector ) {
+		var utils = $fnTabOverride.style.utils;
+		utils.addEnabledClass( $container[0] );
+		utils.addActiveClass( $container[0] );
+		utils.addTabSizeCSSSelector( '.(enabledClass) ' + selector );
+	}
+
+	function removeStyles( $container, selector ) {
+		var utils = $fnTabOverride.style.utils;
+		utils.removeEnabledClass( $container[0] );
+		utils.removeActiveClass( $container[0] );
+		utils.removeTabSizeCSSSelector( '.(enabledClass) ' + selector );
+	}
+
+	function addCacheItem( $container, selector ) {
+		cache.push({ $container: $container, selector: selector });
+	}
+
+	function removeCacheItem( $container, selector ) {
+		var i,
+			len = cache.length;
+
+		for ( i = 0; i < len; i += 1 ) {
+			if ( cache[i].$container === $container &&
+					cache[i].selector === selector ) {
+				cache.splice( i, 1 );
+				break;
+			}
+		}
+	}
 
 	$fnTabOverride.style = tabOverride.style;
 
-	// for delegated events, add and remove the classes on the container element
 	$fnTabOverride.addDelegatedExtension(function ( $container, selector, enable ) {
-		var utils = $fnTabOverride.style.utils;
+		(enable ? addCacheItem : removeCacheItem)( $container, selector );
 
 		if ( $fnTabOverride.style() ) {
-			if ( enable ) {
-				utils.addEnabledClass( $container[0] );
-				utils.addActiveClass( $container[0] );
-				utils.tabSizeCSSSelector( '.(enabledClass) ' + selector );
-			} else {
-				utils.removeEnabledClass( $container[0] );
-				utils.removeActiveClass( $container[0] );
-				utils.tabSizeCSSSelector( '' );
-			}
+			(enable ? addStyles : removeStyles)( $container, selector );
 		}
 	});
 
@@ -73,4 +97,14 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 		}
 		removeDelegatedListeners( $container, selector );
 	};
+
+	$fnTabOverride.style.addExtension(function ( enable ) {
+		var i,
+			len = cache.length,
+			editStyles = enable ? addStyles : removeStyles;
+
+		for ( i = 0; i < len; i += 1 ) {
+			editStyles( cache[i].$container, cache[i].selector );
+		}
+	});
 }));

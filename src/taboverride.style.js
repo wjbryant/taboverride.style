@@ -27,10 +27,11 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         addListeners = tabOverride.utils.addListeners,
         removeListeners = tabOverride.utils.removeListeners,
         hardTabSize = 4,
+        extensions = [],
         styleElem,
         styleSheet,
         tabSizeRule,
-        extraSelectorText,
+        extraSelectors = [],
         // this is a live collection
         textareas = document.getElementsByTagName('textarea');
 
@@ -108,10 +109,10 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
     function updateTabSizeCSSRule(className, tabSize) {
         var selector = 'textarea.' + (className || enabledClass);
 
-        if (extraSelectorText) {
-            selector += ',' + extraSelectorText
-                .replace('.(enabledClass)', '.' +  enabledClass)
-                .replace('.(activeClass)', '.' + activeClass);
+        if (extraSelectors.length) {
+            selector += ',' + extraSelectors.join(',')
+                .replace(/\.\(enabledClass\)/g, '.' +  enabledClass)
+                .replace(/\.\(activeClass\)/g, '.' + activeClass);
         }
 
         if (styleSheet.deleteRule) {
@@ -131,11 +132,22 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         updateTabSizeCSSValue(arguments.length > 1 ? tabSize : hardTabSize);
     }
 
-    function tabSizeCSSSelector(newText) {
-        if (!arguments.length) {
-            return extraSelectorText;
+    function addTabSizeCSSSelector(newSelector) {
+        extraSelectors.push(newSelector);
+        updateTabSizeCSSRule();
+    }
+
+    function removeTabSizeCSSSelector(cssSelector) {
+        var i,
+            len = extraSelectors.length;
+
+        for (i = 0; i < len; i += 1) {
+            if (extraSelectors[i] === cssSelector) {
+                extraSelectors.splice(i, 1);
+                break;
+            }
         }
-        extraSelectorText = newText;
+
         updateTabSizeCSSRule();
     }
 
@@ -148,7 +160,11 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
             currTextarea;
 
         if (arguments.length) {
-            len = textareas.length;
+
+            // execute all extensions
+            for (i = 0; i < extensions.length; i += 1) {
+                extensions[i](enable);
+            }
 
             if (enable) {
                 editEnabledClass = addEnabledClass;
@@ -159,6 +175,8 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
                 editActiveClass = removeActiveClass;
                 style = false;
             }
+
+            len = textareas.length;
 
             for (i = 0; i < len; i += 1) {
                 currTextarea = textareas[i];
@@ -172,6 +190,14 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         }
 
         return style;
+    };
+
+    // add an extension function
+    tabOverride.style.addExtension = function (func) {
+        if (typeof func === 'function') {
+            extensions.push(func);
+        }
+        return this;
     };
 
     // get/set the "enabled" class name (default = tabOverrideEnabled)
@@ -219,7 +245,8 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         removeActiveClass: removeActiveClass,
         updateEnabledClass: updateEnabledClass,
         updateActiveClass: updateActiveClass,
-        tabSizeCSSSelector: tabSizeCSSSelector
+        addTabSizeCSSSelector: addTabSizeCSSSelector,
+        removeTabSizeCSSSelector: removeTabSizeCSSSelector
     };
 
 

@@ -75,6 +75,18 @@ var hardTabSize = tabOverride.style.hardTabSize();
 tabOverride.style.hardTabSize(4); // default
 ```
 
+### Add an Extension Function
+
+```javascript
+tabOverride.style.addExtension(function (enable) {
+    if (enable) {
+        // the style extension was enabled
+    } else {
+        // the style extension was disabled
+    }
+});
+```
+
 ### Utility Functions
 
 ```javascript
@@ -94,13 +106,13 @@ tabOverride.style.utils.updateActiveClass('newActiveClass');
 tabOverride.style.utils.updateEnabledClass();
 tabOverride.style.utils.updateActiveClass();
 
-// get the current extra CSS selector for the hard tab size rule
-tabOverride.style.utils.tabSizeCSSSelector();
-
 // add an extra CSS selector for the hard tab size rule
 // ".(enabledClass)" and ".(activeClass)" will be replaced with the current
 // enabled or active class
-tabOverride.style.utils.tabSizeCSSSelector('.(enabledClass) textarea');
+tabOverride.style.utils.addTabSizeCSSSelector('.(enabledClass) textarea');
+
+// remove an extra CSS selector for the hard tab size rule
+tabOverride.style.utils.removeTabSizeCSSSelector('.(enabledClass) textarea');
 ```
 
 *Note: These functions will not add a class to an element more than once.*
