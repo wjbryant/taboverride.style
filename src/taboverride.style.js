@@ -24,8 +24,6 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
     var style = true,
         enabledClass = 'tabOverrideEnabled',
         activeClass = 'tabOverrideActive',
-        addListeners = tabOverride.utils.addListeners,
-        removeListeners = tabOverride.utils.removeListeners,
         hardTabSize = 4,
         extensions = [],
         styleElem,
@@ -262,11 +260,11 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
     }
 
     // create the CSS rule
-    updateTabSizeCSSRule(enabledClass);
+    updateTabSizeCSSRule();
 
 
     // add the extension to Tab Override (hook into the set method)
-    tabOverride.addExtension(function (elem, enable) {
+    tabOverride.addExtension('set', function (elem, enable) {
         if (style) {
             if (enable) {
                 addEnabledClass(elem);
@@ -278,20 +276,17 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         }
     });
 
-    // wrap the addListeners and removeListeners utility methods
-    // This will only affect extensions, since Tab Override only adds and
-    // removes listeners from inside the set method and doesn't use these
-    // utility methods directly. Only modify the active class here.
-    tabOverride.utils.addListeners = function (elem) {
+    // whenever the listeners are added, add the active class
+    tabOverride.addExtension('addListeners', function (elem) {
         if (style) {
             addActiveClass(elem);
         }
-        addListeners(elem);
-    };
-    tabOverride.utils.removeListeners = function (elem) {
+    });
+
+    // whenever the listeners are removed, remove the active class
+    tabOverride.addExtension('removeListeners', function (elem) {
         if (style) {
             removeActiveClass(elem);
         }
-        removeListeners(elem);
-    };
+    });
 }));
