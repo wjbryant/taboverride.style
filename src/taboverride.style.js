@@ -25,7 +25,6 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         enabledClass = 'tabOverrideEnabled',
         activeClass = 'tabOverrideActive',
         hardTabSize = 4,
-        extensions = [],
         styleElem,
         styleSheet,
         tabSizeRule,
@@ -159,10 +158,7 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 
         if (arguments.length) {
 
-            // execute all extensions
-            for (i = 0; i < extensions.length; i += 1) {
-                extensions[i](enable);
-            }
+            tabOverride.utils.executeExtensions('setStyle', enable);
 
             if (enable) {
                 editEnabledClass = addEnabledClass;
@@ -188,14 +184,6 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         }
 
         return style;
-    };
-
-    // add an extension function
-    tabOverride.style.addExtension = function (func) {
-        if (typeof func === 'function') {
-            extensions.push(func);
-        }
-        return this;
     };
 
     // get/set the "enabled" class name (default = tabOverrideEnabled)

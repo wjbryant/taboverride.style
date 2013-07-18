@@ -74,7 +74,7 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 
 	$fnTabOverride.style = tabOverride.style;
 
-	$fnTabOverride.addExtension( "setDelegated", function ( $container, selector, enable ) {
+	tabOverride.addExtension( "setDelegated", function ( $container, selector, enable ) {
 		( enable ? addCacheItem : removeCacheItem )( $container, selector );
 
 		if ( $fnTabOverride.style() ) {
@@ -83,18 +83,18 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 	});
 
 	// compatibility with other extensions that add and remove the listeners directly
-	$fnTabOverride.addExtension( "addDelegatedListeners", function ( $container, selector ) {
+	tabOverride.addExtension( "addDelegatedListeners", function ( $container, selector ) {
 		if ( $fnTabOverride.style() ) {
 			$fnTabOverride.style.utils.addActiveClass( $container[ 0 ] );
 		}
 	});
-	$fnTabOverride.addExtension( "removeDelegatedListeners", function ( $container, selector ) {
+	tabOverride.addExtension( "removeDelegatedListeners", function ( $container, selector ) {
 		if ( $fnTabOverride.style() ) {
 			$fnTabOverride.style.utils.removeActiveClass( $container[ 0 ] );
 		}
 	});
 
-	$fnTabOverride.style.addExtension(function ( enable ) {
+	tabOverride.addExtension( "setStyle", function ( enable ) {
 		var editStyles = enable ? addStyles : removeStyles;
 
 		$.each( cache, function () {
