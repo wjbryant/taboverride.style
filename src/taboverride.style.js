@@ -158,7 +158,7 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 
         if (arguments.length) {
 
-            tabOverride.utils.executeExtensions('setStyle', enable);
+            tabOverride.utils.executeExtensions('setStyle', [enable]);
 
             if (enable) {
                 editEnabledClass = addEnabledClass;
