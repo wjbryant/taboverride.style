@@ -103,8 +103,8 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         tabSizeRule.style.tabSize = tabSize;
     }
 
-    function updateTabSizeCSSRule(className, tabSize) {
-        var selector = 'textarea.' + (className || enabledClass);
+    function updateTabSizeCSSRule() {
+        var selector = 'textarea.' + enabledClass;
 
         if (extraSelectors.length) {
             selector += ',' + extraSelectors.join(',')
@@ -126,7 +126,7 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         }
 
         tabSizeRule = (styleSheet.cssRules || styleSheet.rules)[0];
-        updateTabSizeCSSValue(arguments.length > 1 ? tabSize : hardTabSize);
+        updateTabSizeCSSValue(hardTabSize);
     }
 
     function addTabSizeCSSSelector(newSelector) {
@@ -191,8 +191,8 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         if (arguments.length) {
             if (newClass && typeof newClass === 'string') {
                 updateClassOnTextareas(enabledClass, newClass);
-                updateTabSizeCSSRule(newClass);
                 enabledClass = newClass;
+                updateTabSizeCSSRule();
             }
             return this;
         }
@@ -205,6 +205,7 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
             if (newClass && typeof newClass === 'string') {
                 updateClassOnTextareas(activeClass, newClass);
                 activeClass = newClass;
+                updateTabSizeCSSRule();
             }
             return this;
         }
