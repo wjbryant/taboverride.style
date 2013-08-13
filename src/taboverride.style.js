@@ -30,7 +30,11 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         tabSizeRule,
         extraSelectors = [],
         // this is a live collection
-        textareas = document.getElementsByTagName('textarea');
+        textareas = document.getElementsByTagName('textarea'),
+        iElemStyle = document.createElement('i').style,
+        hardTabSizeSupported = iElemStyle.tabSize === '' ||
+            iElemStyle.MozTabSize === '' ||
+            iElemStyle.OTabSize === '';
 
     // add a class to an element
     function addClass(elem, cssClass) {
@@ -224,8 +228,9 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         return hardTabSize;
     };
 
-    // public util methods
+    // public utility properties and methods
     tabOverride.style.utils = {
+        hardTabSizeSupported: hardTabSizeSupported,
         addEnabledClass: addEnabledClass,
         addActiveClass: addActiveClass,
         removeEnabledClass: removeEnabledClass,
@@ -235,6 +240,10 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         addTabSizeCSSSelector: addTabSizeCSSSelector,
         removeTabSizeCSSSelector: removeTabSizeCSSSelector
     };
+
+
+    // this was used to determine hard tab size support and is no longer needed
+    iElemStyle = null;
 
 
     // create a new style sheet element
