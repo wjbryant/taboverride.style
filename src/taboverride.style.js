@@ -51,8 +51,8 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
     // replace a class with a new one for the specified element
     function replaceClass(elem, oldClass, newClass) {
         elem.className = elem.className.replace(
-            new RegExp('(?=^|\\s)' + oldClass + '(?=\\s|$)', 'g'),
-            newClass
+            new RegExp('(^|\\s)' + oldClass + '(?=\\s|$)', 'g'),
+            '$1' + newClass
         );
     }
 
