@@ -113,6 +113,7 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 	 * @param  {boolean}          [enable]  whether to enable the style extension
 	 * @return {boolean|Function}           whether the style extension is enabled
 	 *                                      or the tabOverride function
+	 *
 	 * @method external:"jQuery.fn.tabOverride".style
 	 */
 	$fnTabOverride.style = tabOverride.style;
