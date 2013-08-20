@@ -1,7 +1,10 @@
 /*! taboverride.style v0.1.0-dev | https://github.com/wjbryant/taboverride.style
 Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 
+/*jslint browser: true */
 /*global exports, require, define, tabOverride */
+
+/** @namespace tabOverride */
 
 // use CommonJS or AMD if available
 (function (factory) {
@@ -36,7 +39,14 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
             iElemStyle.MozTabSize === '' ||
             iElemStyle.OTabSize === '';
 
-    // add a class to an element
+
+    // ***** Private Inner Functions *****
+
+    /**
+     * Adds an inline CSS class to an element.
+     *
+     * @private
+     */
     function addClass(elem, cssClass) {
         // check if the element has the specified CSS class before adding it
         if (!(new RegExp('(?:^|\\s)' + cssClass + '(?:\\s|$)')).test(elem.className)) {
@@ -44,7 +54,11 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         }
     }
 
-    // remove a class from an element
+    /**
+     * Removes an inline CSS class from an element.
+     *
+     * @private
+     */
     function removeClass(elem, cssClass) {
         elem.className = elem.className.replace(
             new RegExp('(?:^|\\s)' + cssClass + '(?=\\s|$)', 'g'),
@@ -52,7 +66,15 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         );
     }
 
-    // replace a class with a new one for the specified element
+    /**
+     * Replaces an inline CSS class with a new one for the specified element.
+     *
+     * @param {Element} elem      the element on which to replace oldClass
+     * @param {string}  oldClass  the class name to change
+     * @param {string}  newClass  the class name with which to replace oldClass
+     *
+     * @private
+     */
     function replaceClass(elem, oldClass, newClass) {
         elem.className = elem.className.replace(
             new RegExp('(^|\\s)' + oldClass + '(?=\\s|$)', 'g'),
@@ -60,28 +82,15 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         );
     }
 
-    // add the enabled class
-    function addEnabledClass(elem) {
-        addClass(elem, enabledClass);
-    }
-
-    // add the active class
-    function addActiveClass(elem) {
-        addClass(elem, activeClass);
-    }
-
-    // remove the enabled class
-    function removeEnabledClass(elem) {
-        removeClass(elem, enabledClass);
-    }
-
-    // remove the active class
-    function removeActiveClass(elem) {
-        removeClass(elem, activeClass);
-    }
-
-    // loop through all textareas and update them to the new class
-    // if no new class is specified, remove the old class
+    /**
+     * Loops through all textareas and updates them to the new class. If no new
+     * class is specified, the old class is removed.
+     *
+     * @param {string} oldClass    the class name to change
+     * @param {string} [newClass]  the class name with which to replace oldClass
+     *
+     * @private
+     */
     function updateClassOnTextareas(oldClass, newClass) {
         var editClass = newClass ? replaceClass : removeClass,
             len = textareas.length,
@@ -92,21 +101,25 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         }
     }
 
-    function updateEnabledClass(newClass) {
-        updateClassOnTextareas(enabledClass, newClass);
-    }
-
-    function updateActiveClass(newClass) {
-        updateClassOnTextareas(activeClass, newClass);
-    }
-
-    // change the tab-size CSS property value
+    /**
+     * Changes the tab-size CSS property value.
+     *
+     * @param {number|string} tabSize  the value to use for the CSS tab-size property
+     *
+     * @private
+     */
     function updateTabSizeCSSValue(tabSize) {
         tabSizeRule.style.MozTabSize = tabSize;
         tabSizeRule.style.OTabSize = tabSize;
         tabSizeRule.style.tabSize = tabSize;
     }
 
+    /**
+     * Updates the tab size CSS rule to use the current enabled class, active
+     * class, extra selectors, and hard tab size.
+     *
+     * @private
+     */
     function updateTabSizeCSSRule() {
         var selector = 'textarea.' + enabledClass;
 
@@ -130,14 +143,75 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         }
 
         tabSizeRule = (styleSheet.cssRules || styleSheet.rules)[0];
+
+        // set tab-size declarations for the new rule
         updateTabSizeCSSValue(hardTabSize);
     }
 
+
+    // ***** Private Utils *****
+
+    /**
+     * @see tabOverride.style.utils.addEnabledClass
+     * @private
+     */
+    function addEnabledClass(elem) {
+        addClass(elem, enabledClass);
+    }
+
+    /**
+     * @see tabOverride.style.utils.addActiveClass
+     * @private
+     */
+    function addActiveClass(elem) {
+        addClass(elem, activeClass);
+    }
+
+    /**
+     * @see tabOverride.style.utils.removeEnabledClass
+     * @private
+     */
+    function removeEnabledClass(elem) {
+        removeClass(elem, enabledClass);
+    }
+
+    /**
+     * @see tabOverride.style.utils.removeActiveClass
+     * @private
+     */
+    function removeActiveClass(elem) {
+        removeClass(elem, activeClass);
+    }
+
+    /**
+     * @see tabOverride.style.utils.updateEnabledClass
+     * @private
+     */
+    function updateEnabledClass(newClass) {
+        updateClassOnTextareas(enabledClass, newClass);
+    }
+
+    /**
+     * @see tabOverride.style.utils.updateActiveClass
+     * @private
+     */
+    function updateActiveClass(newClass) {
+        updateClassOnTextareas(activeClass, newClass);
+    }
+
+    /**
+     * @see tabOverride.style.utils.addTabSizeCSSSelector
+     * @private
+     */
     function addTabSizeCSSSelector(newSelector) {
         extraSelectors.push(newSelector);
         updateTabSizeCSSRule();
     }
 
+    /**
+     * @see tabOverride.style.utils.removeTabSizeCSSSelector
+     * @private
+     */
     function removeTabSizeCSSSelector(cssSelector) {
         var i,
             len = extraSelectors.length;
@@ -152,7 +226,22 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         updateTabSizeCSSRule();
     }
 
-    // provide a method to enable/disable the extension
+
+    // ***** Public Methods *****
+
+    /** @namespace tabOverride.style */
+
+    /**
+     * Enables or disables the style extension (default = enabled). The
+     * 'setStyle' hook is executed whenever the style extension is enabled or
+     * disabled. The extension function is passed a boolean value indicating
+     * whether the extension was enabled (true) or disabled (false).
+     *
+     * @param  {boolean}        [enable]  whether to enable the style extension
+     * @return {boolean|Object}           whether the style extension is enabled or the tabOverride object
+     *
+     * @method tabOverride.style(2)
+     */
     tabOverride.style = function (enable) {
         var len,
             i,
@@ -190,7 +279,12 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         return style;
     };
 
-    // get/set the "enabled" class name (default = tabOverrideEnabled)
+    /**
+     * Gets or sets the "enabled" class name. (default = tabOverrideEnabled)
+     *
+     * @param  {string}          [newClass]  the new "enabled" class name
+     * @return {string|Function}             the current "enabled" class name or tabOverride.style
+     */
     tabOverride.style.enabledClass = function (newClass) {
         if (arguments.length) {
             if (newClass && typeof newClass === 'string') {
@@ -203,7 +297,12 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         return enabledClass;
     };
 
-    // get/set the "active" class name (default = tabOverrideActive)
+    /**
+     * Gets or sets the "active" class name. (default = tabOverrideActive)
+     *
+     * @param  {string}          [newClass]  the new "active" class name
+     * @return {string|Function}             the current "active" class name or tabOverride.style
+     */
     tabOverride.style.activeClass = function (newClass) {
         if (arguments.length) {
             if (newClass && typeof newClass === 'string') {
@@ -216,7 +315,12 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         return activeClass;
     };
 
-    // get/set the hard tab size (default = 4)
+    /**
+     * Gets or sets the hard tab size. (default = 4)
+     *
+     * @param  {number}          [size]  the hard tab size
+     * @return {number|Function}         the current hard tab size or tabOverride.style
+     */
     tabOverride.style.hardTabSize = function (size) {
         if (arguments.length) {
             if (typeof size === 'number' && size > 0) {
@@ -228,16 +332,90 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
         return hardTabSize;
     };
 
-    // public utility properties and methods
+
+    // ***** utils Namespace *****
+
+    /** @namespace */
     tabOverride.style.utils = {
+
+        /**
+         * whether changing the display size of hard tabs is supported in this
+         * browser
+         *
+         * @type boolean
+         */
         hardTabSizeSupported: hardTabSizeSupported,
+
+        /**
+         * Adds the enabled class to the specified element.
+         *
+         * @param {Element} elem  the element to which the enabled class will be added
+         *
+         * @method
+         */
         addEnabledClass: addEnabledClass,
+
+        /**
+         * Adds the active class to the specified element.
+         *
+         * @param {Element} elem  the element to which the active class will be added
+         *
+         * @method
+         */
         addActiveClass: addActiveClass,
+
+        /**
+         * Removes the enabled class from the specified element.
+         *
+         * @param {Element} elem  the element from which the enabled class will be removed
+         *
+         * @method
+         */
         removeEnabledClass: removeEnabledClass,
+
+        /**
+         * Removes the active class from the specified element.
+         *
+         * @param {Element} elem  the element from which the active class will be removed
+         *
+         * @method
+         */
         removeActiveClass: removeActiveClass,
+
+        /**
+         * Replaces the enabled class with the specified class name.
+         *
+         * @param {string} newClass  the new enabled class name
+         *
+         * @method
+         */
         updateEnabledClass: updateEnabledClass,
+
+        /**
+         * Replaces the active class with the specified class name.
+         *
+         * @param {string} newClass  the new active class name
+         *
+         * @method
+         */
         updateActiveClass: updateActiveClass,
+
+        /**
+         * Adds a new selector string to the tab size CSS rule.
+         *
+         * @param {string} newSelector  the selector string to add to the tab size CSS rule
+         *
+         * @method
+         */
         addTabSizeCSSSelector: addTabSizeCSSSelector,
+
+        /**
+         * Removes a selector string from the tab size CSS rule.
+         *
+         * @param {string} cssSelector  the selector string to remove from the tab size CSS rule
+         *
+         * @method
+         */
         removeTabSizeCSSSelector: removeTabSizeCSSSelector
     };
 

@@ -1,21 +1,13 @@
 /*! jquery.taboverride.style v0.1.0-dev | https://github.com/wjbryant/taboverride.style
 Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 
+/*jslint white: true */
 /*global exports, require, define, jQuery, tabOverride */
 
 /**
- * the global jQuery object
+ * The tabOverride jQuery plugin
  *
- * @name jQuery
- * @namespace
- */
-
-/**
- * the jQuery prototype shortcut "namespace"
- *
- * @name fn
- * @namespace
- * @memberOf jQuery
+ * @external "jQuery.fn.tabOverride"
  */
 
 // Use CommonJS or AMD if available
@@ -40,7 +32,15 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 	var $fnTabOverride = $.fn.tabOverride,
 		cache = [];
 
-	// for delegated events, add and remove the classes on the container element
+	/**
+	 * Adds and removes the classes on the container element for delegated events.
+	 *
+	 * @param {Object} $container  the jQuery object for the container element(s)
+	 * @param {string} selector    the selector string for textareas in the
+	 *                             container element
+	 *
+	 * @private
+	 */
 	function addStyles( $container, selector ) {
 		var utils = $fnTabOverride.style.utils;
 		utils.addEnabledClass( $container[ 0 ] );
@@ -48,6 +48,17 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 		utils.addTabSizeCSSSelector( ".(enabledClass) " + selector );
 	}
 
+	/**
+	 * Removes all CSS classes set by tabOverride.style for the specified
+	 * container element and also removes the specified selector string from
+	 * the tab-size CSS rule.
+	 *
+	 * @param {Object} $container  the jQuery object for the container element(s)
+	 * @param {string} selector    the selector string for textareas in the
+	 *                             container element
+	 *
+	 * @private
+	 */
 	function removeStyles( $container, selector ) {
 		var utils = $fnTabOverride.style.utils;
 		utils.removeEnabledClass( $container[ 0 ] );
@@ -55,10 +66,28 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 		utils.removeTabSizeCSSSelector( ".(enabledClass) " + selector );
 	}
 
+	/**
+	 * Adds an item to the cache array.
+	 *
+	 * @param {Object} $container  the jQuery object for the container element(s)
+	 * @param {string} selector    the selector string for textareas in the
+	 *                             container element
+	 *
+	 * @private
+	 */
 	function addCacheItem( $container, selector ) {
 		cache.push({ $container: $container, selector: selector });
 	}
 
+	/**
+	 * Removes an item from the cache array.
+	 *
+	 * @param {Object} $container  the jQuery object for the container element(s)
+	 * @param {string} selector    the selector string for textareas in the
+	 *                             container element
+	 *
+	 * @private
+	 */
 	function removeCacheItem( $container, selector ) {
 		var i,
 			len = cache.length;
@@ -72,7 +101,24 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 		}
 	}
 
+
+	/**
+	 * Enables or disables the style extension (default = enabled). The
+	 * 'setStyle' hook is executed whenever the style extension is enabled or
+	 * disabled. The extension function is passed a boolean value indicating
+	 * whether the extension was enabled (true) or disabled (false). For more
+	 * information regarding the style extension and its usage, please refer to
+	 * the documentation for tabOverride.style.
+	 *
+	 * @param  {boolean}          [enable]  whether to enable the style extension
+	 * @return {boolean|Function}           whether the style extension is enabled
+	 *                                      or the tabOverride function
+	 * @method external:"jQuery.fn.tabOverride".style
+	 */
 	$fnTabOverride.style = tabOverride.style;
+
+
+	// add extension functions
 
 	tabOverride.addExtension( "setDelegated", function ( $container, selector, enable ) {
 		( enable ? addCacheItem : removeCacheItem )( $container, selector );
@@ -83,12 +129,12 @@ Copyright (c) 2013 Bill Bryant | http://opensource.org/licenses/mit */
 	});
 
 	// compatibility with other extensions that add and remove the listeners directly
-	tabOverride.addExtension( "addDelegatedListeners", function ( $container, selector ) {
+	tabOverride.addExtension( "addDelegatedListeners", function ( $container ) {
 		if ( $fnTabOverride.style() ) {
 			$fnTabOverride.style.utils.addActiveClass( $container[ 0 ] );
 		}
 	});
-	tabOverride.addExtension( "removeDelegatedListeners", function ( $container, selector ) {
+	tabOverride.addExtension( "removeDelegatedListeners", function ( $container ) {
 		if ( $fnTabOverride.style() ) {
 			$fnTabOverride.style.utils.removeActiveClass( $container[ 0 ] );
 		}
