@@ -111,7 +111,7 @@ namespace:
 tabOverride.style.utils.hardTabSizeSupported
 ```
 
-### Utility Functions
+### Utility Methods
 
 ```javascript
 // this textarea variable is used in the following examples
@@ -162,4 +162,4 @@ tabOverride.style.utils.addTabSizeCSSSelector('.(enabledClass) textarea');
 tabOverride.style.utils.removeTabSizeCSSSelector('.(enabledClass) textarea');
 ```
 
-*Note: These functions will not add the same class to an element more than once.*
+*Note: These methods will not add the same class to an element more than once.*
