@@ -1,0 +1,28 @@
+{
+    "name": "taboverride.style",
+    "version": "0.1.0",
+    "author": {
+        "name": "Bill Bryant",
+        "url": "http://wjbryant.com/"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://opensource.org/licenses/mit"
+        }
+    ],
+    "libDependencies": {
+        "taboverride": ">=4.0.0 <5.0.0"
+    },
+    "description": "Style extension for Tab Override. Adds CSS classes to textarea elements when Tab Override is enabled and active.",
+    "keywords": [
+        "tab",
+        "tabs",
+        "size",
+        "style",
+        "css",
+        "extension"
+    ],
+    "homepage": "https://github.com/wjbryant/taboverride.style",
+    "bugs": "https://github.com/wjbryant/taboverride.style/issues"
+}
